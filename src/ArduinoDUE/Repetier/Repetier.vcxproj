@@ -1,0 +1,179 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{C5F80730-F44F-4478-BDAE-6634EFC2CA88}</ProjectGuid>
+    <RootNamespace>
+    </RootNamespace>
+    <ProjectName>Repetier</ProjectName>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>
+    </PlatformToolset>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>
+    </PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup />
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <SDLCheck>true</SDLCheck>
+      <AdditionalIncludeDirectories>C:\Users\bradp\Documents\Arduino\libraries\Trinamic_TMC2130;C:\Users\bradp\AppData\Local\arduino15\packages\arduino\hardware\sam\1.6.9\libraries\SPI\src;C:\Program Files (x86)\Arduino\libraries;C:\Users\bradp\AppData\Local\arduino15\packages\arduino\hardware\sam\1.6.9\libraries;C:\Users\bradp\Documents\Arduino\libraries;C:\Users\bradp\AppData\Local\arduino15\packages\arduino\hardware\sam\1.6.9\cores\arduino;C:\Users\bradp\AppData\Local\arduino15\packages\arduino\hardware\sam\1.6.9\cores\arduino\avr;C:\Users\bradp\AppData\Local\arduino15\packages\arduino\hardware\sam\1.6.9\cores\arduino\USB;C:\Users\bradp\AppData\Local\arduino15\packages\arduino\hardware\sam\1.6.9\variants\arduino_due_x;$(ProjectDir)..\Repetier;C:\Users\bradp\AppData\Local\arduino15\packages\arduino\hardware\sam\1.6.9\system\libsam;C:\Users\bradp\AppData\Local\arduino15\packages\arduino\hardware\sam\1.6.9\system\CMSIS\CMSIS\Include\;C:\Users\bradp\AppData\Local\arduino15\packages\arduino\hardware\sam\1.6.9\system\CMSIS\Device\ATMEL\;C:\Users\bradp\AppData\Local\arduino15\packages\arduino\tools\arm-none-eabi-gcc\4.8.3-2014q1\arm-none-eabi\include\c++\4.8.3;C:\Users\bradp\AppData\Local\arduino15\packages\arduino\tools\arm-none-eabi-gcc\4.8.3-2014q1\arm-none-eabi\include\c++\4.8.3\arm-none-eabi\;C:\Users\bradp\AppData\Local\arduino15\packages\arduino\tools\arm-none-eabi-gcc\4.8.3-2014q1\arm-none-eabi\include\;C:\Users\bradp\AppData\Local\arduino15\packages\arduino\tools\arm-none-eabi-gcc\4.8.3-2014q1\lib\gcc\arm-none-eabi\4.8.3\include;C:\Users\bradp\AppData\Local\arduino15\packages\arduino\hardware\sam\1.6.9\system\CMSIS\Device\ATMEL\;C:\Users\bradp\AppData\Local\arduino15\packages\arduino\hardware\sam\1.6.9\system\libsam;C:\Users\bradp\AppData\Local\arduino15\packages\arduino\hardware\sam\1.6.9\system\libsam\include;C:\Users\bradp\AppData\Local\arduino15\packages\arduino\hardware\sam\1.6.9\system\CMSIS\CMSIS\Include\;C:\Users\bradp\AppData\Local\arduino15\packages\arduino\hardware\sam\1.6.9\system\CMSIS\CMSIS\Include\;C:\Users\bradp\AppData\Local\arduino15\packages\arduino\hardware\sam\1.6.9\system\CMSIS\CMSIS\Include\;C:\Users\bradp\AppData\Local\arduino15\packages\arduino\hardware\sam\1.6.9\system\CMSIS\Device\ATMEL\;C:\Users\bradp\AppData\Local\arduino15\packages\arduino\hardware\sam\1.6.9\system\libsam;C:\Users\bradp\AppData\Local\arduino15\packages\arduino\hardware\sam\1.6.9\system\libsam\include;C:\Program Files (x86)\Arduino\hardware\tools\g++_arm_none_eabi\arm-none-eabi\include;C:\Program Files (x86)\Arduino\hardware\tools\g++_arm_none_eabi\arm_none_eabi\include\;C:\Program Files (x86)\Arduino\hardware\tools\g++_arm_none_eabi\lib\gcc\arm-none-eabi\4.4.1\include;C:\Program Files (x86)\Arduino\hardware\tools\g++_arm_none_eabi\lib\gcc\arm-none-eabi\4.4.1\include\;C:\Users\bradp\AppData\Local\arduino15\packages\arduino\hardware\sam\1.6.9\system\CMSIS\Device\ATMEL\sam3xa\include\pio;C:\Users\bradp\AppData\Local\arduino15\packages\arduino\hardware\sam\1.6.9\system\libsam\include;C:\Users\bradp\AppData\Local\arduino15\packages\arduino\hardware\sam\1.6.9\CMSIS\CMSIS\Include\;C:\Users\bradp\AppData\Local\arduino15\packages\arduino\hardware\sam\1.6.9\system\CMSIS\Device\ATMEL\sam3xa\include;C:\Users\bradp\AppData\Local\arduino15\packages\arduino\hardware\sam\1.6.9\system\libsam;C:\Users\bradp\AppData\Local\arduino15\packages\arduino\hardware\sam\1.6.9\system\CMSIS\Device\ATMEL;C:\Users\bradp\AppData\Local\arduino15\packages\arduino\hardware\sam\1.6.9\system\CMSIS\Device\ATMEL\sam3xa\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <ForcedIncludeFiles>$(ProjectDir)__vm\.Repetier.vsarduino.h;%(ForcedIncludeFiles)</ForcedIncludeFiles>
+      <IgnoreStandardIncludePath>false</IgnoreStandardIncludePath>
+      <PreprocessorDefinitions>printf=iprintf;F_CPU=84000000L;ARDUINO=106012;ARDUINO_SAM_DUE;ARDUINO_ARCH_SAM;__SAM3X8E__;USB_VID=0x2341;USB_PID=0x003e;USBCON;__cplusplus=201103L;_VMICRO_INTELLISENSE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ClCompile>
+    <Link>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>MaxSpeed</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <SDLCheck>true</SDLCheck>
+    </ClCompile>
+    <Link>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ProjectCapability Include="VisualMicro" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Repetier.ino">
+      <FileType>CppCode</FileType>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Commands.h">
+      <FileType>CppCode</FileType>
+    </ClInclude>
+    <ClInclude Include="Communication.h">
+      <FileType>CppCode</FileType>
+    </ClInclude>
+    <ClInclude Include="Configuration.h">
+      <FileType>CppCode</FileType>
+    </ClInclude>
+    <ClInclude Include="DisplayList.h">
+      <FileType>CppCode</FileType>
+    </ClInclude>
+    <ClInclude Include="Drivers.h">
+      <FileType>CppCode</FileType>
+    </ClInclude>
+    <ClInclude Include="Eeprom.h">
+      <FileType>CppCode</FileType>
+    </ClInclude>
+    <ClInclude Include="Events.h">
+      <FileType>CppCode</FileType>
+    </ClInclude>
+    <ClInclude Include="Extruder.h">
+      <FileType>CppCode</FileType>
+    </ClInclude>
+    <ClInclude Include="fastio.h">
+      <FileType>CppCode</FileType>
+    </ClInclude>
+    <ClInclude Include="FatStructs.h">
+      <FileType>CppCode</FileType>
+    </ClInclude>
+    <ClInclude Include="gcode.h">
+      <FileType>CppCode</FileType>
+    </ClInclude>
+    <ClInclude Include="HAL.h">
+      <FileType>CppCode</FileType>
+    </ClInclude>
+    <ClInclude Include="logo.h">
+      <FileType>CppCode</FileType>
+    </ClInclude>
+    <ClInclude Include="motion.h">
+      <FileType>CppCode</FileType>
+    </ClInclude>
+    <ClInclude Include="pins.h">
+      <FileType>CppCode</FileType>
+    </ClInclude>
+    <ClInclude Include="Printer.h">
+      <FileType>CppCode</FileType>
+    </ClInclude>
+    <ClInclude Include="Repetier.h">
+      <FileType>CppCode</FileType>
+    </ClInclude>
+    <ClInclude Include="SdFat.h">
+      <FileType>CppCode</FileType>
+    </ClInclude>
+    <ClInclude Include="u8glib_ex.h">
+      <FileType>CppCode</FileType>
+    </ClInclude>
+    <ClInclude Include="u8glib_ex_stacker.h">
+      <FileType>CppCode</FileType>
+    </ClInclude>
+    <ClInclude Include="ui.h">
+      <FileType>CppCode</FileType>
+    </ClInclude>
+    <ClInclude Include="uiconfig.h">
+      <FileType>CppCode</FileType>
+    </ClInclude>
+    <ClInclude Include="uilang.h">
+      <FileType>CppCode</FileType>
+    </ClInclude>
+    <ClInclude Include="uimenu.h">
+      <FileType>CppCode</FileType>
+    </ClInclude>
+    <ClInclude Include="__vm\.Repetier.vsarduino.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="BedLeveling.cpp" />
+    <ClCompile Include="Commands.cpp" />
+    <ClCompile Include="Communication.cpp" />
+    <ClCompile Include="Drivers.cpp" />
+    <ClCompile Include="Eeprom.cpp" />
+    <ClCompile Include="Extruder.cpp" />
+    <ClCompile Include="gcode.cpp" />
+    <ClCompile Include="HAL.cpp" />
+    <ClCompile Include="motion.cpp" />
+    <ClCompile Include="Printer.cpp" />
+    <ClCompile Include="SDCard.cpp" />
+    <ClCompile Include="SdFat.cpp" />
+    <ClCompile Include="ui.cpp" />
+    <ClCompile Include="uilang.cpp" />
+  </ItemGroup>
+  <PropertyGroup>
+    <DebuggerFlavor>VisualMicroDebugger</DebuggerFlavor>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>
