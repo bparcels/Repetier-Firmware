@@ -1326,12 +1326,18 @@ public:
 	static void tmc2130_init();
 #if (X_IS_TMC2130)
 	static Trinamic_TMC2130 stepperX;
+	static void WriteTMC_X(int reg_index, int32_t value);	
+	static void ReadTMC_X(int reg_index);
 #endif
 #if (Y_IS_TMC2130)
 	static Trinamic_TMC2130 stepperY;
+	static void WriteTMC_Y(int reg_index, int32_t value);
+	static void ReadTMC_Y(int reg_index);
 #endif
 #if (Z_IS_TMC2130)
 	static Trinamic_TMC2130 stepperZ;
+	static void WriteTMC_Z(int reg_index, int32_t value);
+	static void ReadTMC_Z(int reg_index);
 #endif
 #if (E0_IS_TMC2130)
 	static Trinamic_TMC2130 stepperE0;

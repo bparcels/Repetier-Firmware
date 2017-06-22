@@ -2580,6 +2580,66 @@ void Commands::processMCode(GCode *com) {
             dacCommitEeprom();
 #endif
             break;
+
+			///////////////////////////////////////////////////////////  Custom M-Codes to read/write TMC2130 registers  ///////////////////////////////////////////////////////////
+			////////////////////////////////////////////////
+			// M920 -> Write to a TMC2130 register/setting
+			////////////////////////////////////////////////
+			//	Takes an axis code (X,Y,Z,E) with the register index (see below) and an "S" parameter that indicates the value
+			//	i.e. M920 X3 S26
+		case 920:
+			#if USES_TMC2130_DRIVERS	                
+			if(com->hasS()) {
+				if (com->hasX() && X_IS_TMC2130) { Printer::WriteTMC_X((int)com->X, com->S); }
+				if (com->hasY() && Y_IS_TMC2130) { Printer::WriteTMC_Y((int)com->Y, com->S); }
+				if (com->hasZ() && Z_IS_TMC2130) { Printer::WriteTMC_Z((int)com->Z, com->S); }
+			}
+			else {
+				Com::printFLN("No value found, so no register was written!");
+			}
+			#endif			
+			break;
+
+			////////////////////////////////////////////////
+			// M921: Read from a TMC2130 register/setting
+			////////////////////////////////////////////////
+			// Takes axis code (X,Y,Z,E) with an index of which register to read (see below)
+			// i.e. M921 X3
+		case 921:
+			#if USES_TMC2130_DRIVERS
+				if (com->hasX() && X_IS_TMC2130) { Printer::ReadTMC_X((int)com->X); }
+				if (com->hasY() && Y_IS_TMC2130) { Printer::ReadTMC_Y((int)com->Y); }
+				if (com->hasZ() && Z_IS_TMC2130) { Printer::ReadTMC_Z((int)com->Z); }
+			#endif			
+			break;
+
+			////////////////////////////////////////////////
+			// M922: List available TMC2130 registers/indicies
+			////////////////////////////////////////////////
+		case 922:
+			#if USES_TMC2130_DRIVERS
+				Com::printFLN("1 = MRES");
+				Com::printFLN("2 = INTPOL");
+				Com::printFLN("3 = TBL");
+				Com::printFLN("4 = TOFF");
+				Com::printFLN("5 = HSTRT");
+				Com::printFLN("6 = HEND");
+				Com::printFLN("7 = CHM");
+				Com::printFLN("8 = TPOWERDOWN");
+				Com::printFLN("9 = EN_PWM_MODE");
+				Com::printFLN("10 = TCOOLTHRS");
+				Com::printFLN("11 = SFILT");
+				Com::printFLN("12 = SGT");
+				Com::printFLN("13 = SEIMIN");
+				Com::printFLN("14 = SEMIN");
+				Com::printFLN("15 = SEMAX");
+				Com::printFLN("16 = SEDN");
+				Com::printFLN("17 = SEUP");
+			#endif			
+			break;			
+			////////////////////////////// End of custom M-Code //////////////////////////////
+
+
 #if 0 && UI_DISPLAY_TYPE != NO_DISPLAY
         // some debugging commands normally disabled
         case 888:
