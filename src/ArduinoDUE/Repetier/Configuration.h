@@ -68,7 +68,7 @@ To override EEPROM settings with config settings, set EEPROM_MODE 0
 // Alligator Board rev3         = 502
 // Innovo Inventor Board		= 777
 
-#define MOTHERBOARD 777
+#define MOTHERBOARD INVENTOR_BOARD
 
 #include "pins.h"
 
@@ -713,8 +713,8 @@ on this endstop.
 #define MIN_HARDWARE_ENDSTOP_X true
 #define MIN_HARDWARE_ENDSTOP_Y true
 #define MIN_HARDWARE_ENDSTOP_Z true
-#define MAX_HARDWARE_ENDSTOP_X false
-#define MAX_HARDWARE_ENDSTOP_Y false
+#define MAX_HARDWARE_ENDSTOP_X true
+#define MAX_HARDWARE_ENDSTOP_Y true
 #define MAX_HARDWARE_ENDSTOP_Z true
 
 //If your axes are only moving in one direction, make sure the endstops are connected properly.
@@ -1210,7 +1210,7 @@ matches, the stored values are used to overwrite the settings.
 IMPORTANT: With mode <>0 some changes in Configuration.h are not set any more, as they are
            taken from the EEPROM.
 */
-#define EEPROM_MODE 7
+#define EEPROM_MODE 1
 
 
 /**************** duplicate motor driver ***************
@@ -1320,7 +1320,7 @@ to recalibrate z.
 #define Z_PROBE_ON_HIGH 0
 #define Z_PROBE_X_OFFSET 0
 #define Z_PROBE_Y_OFFSET 0
-#define Z_PROBE_BED_DISTANCE 10.0 // Higher than max bed level distance error in mm
+#define Z_PROBE_BED_DISTANCE 20 // Higher than max bed level distance error in mm
 
 // Waits for a signal to start. Valid signals are probe hit and ok button.
 // This is needful if you have the probe trigger by hand.
@@ -1328,7 +1328,7 @@ to recalibrate z.
 /** Speed of z-axis in mm/s when probing */
 #define Z_PROBE_SPEED 5
 #define Z_PROBE_XY_SPEED 50
-#define Z_PROBE_SWITCHING_DISTANCE 5 // Distance to safely switch off probe after it was activated
+#define Z_PROBE_SWITCHING_DISTANCE 10 // Distance to safely switch off probe after it was activated
 #define Z_PROBE_REPETITIONS 3 // Repetitions for probing at one point. 
 /** The height is the difference between activated probe position and nozzle height. */
 #define Z_PROBE_HEIGHT 0
