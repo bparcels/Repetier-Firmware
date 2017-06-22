@@ -604,9 +604,9 @@ void setMotorCurrentPercent(uint8_t channel, float level) {
 // Function to set DAC output voltages by specifying the actual voltage
 // Assumes we force the gain to x1, an internal reference, and a 3.3V system)
 void setDACVoltageDirectly(uint8_t channel, float level) {
+	if (level > MCP4728_VOUT_MAX_VOLTS) level = MCP4728_VOUT_MAX_VOLTS;
+	if (level < 0) level = 0;
 	uint16_t raw_level = 4095 * (level / 2.048);
-	if (raw_level > MCP4728_VOUT_MAX) raw_level = MCP4728_VOUT_MAX;
-	if (raw_level < 0) raw_level = 0;
 	setMotorCurrent(channel, raw_level);
 }
 
@@ -618,9 +618,11 @@ void dacPrintVoltages() {
 	for (int i = 0; i < MCP4728_NUM_CHANNELS; i++) {
 		uint8_t dac_channel = dac_stepper_channel[i]; // DAC Channel is a mapped lookup.
 		Com::printF(dacChannelPrefixes[i]);
-		Com::printF("  Actual Voltage: ", (float)((float)_valuesEp[dac_channel] * (2.048 / 4096.0)));
+		float voltVal = (float)((float)_valuesEp[dac_channel] * (2.048 / 4096.0));
+		float percentVal = (voltVal / MCP4728_VOUT_MAX_VOLTS) * 100.0;
+		Com::printF("  Actual Voltage: ", voltVal);
 		Com::printF("V   ");
-		Com::printF("(", ((float)_valuesEp[dac_channel] * 100 / MCP4728_VOUT_MAX));
+		Com::printF("(", percentVal);
 		Com::printF("%)  ");
 		Com::printF(Com::tSpaceRaw);
 		Com::printF(Com::tColon, _valuesEp[dac_channel]);
@@ -633,9 +635,11 @@ void dacPrintVoltages() {
 	for (int i = 0; i < MCP4728_NUM_CHANNELS; i++) {
 		uint8_t dac_channel = dac_stepper_channel[i]; // DAC Channel is a mapped lookup.
 		Com::printF(dacChannelPrefixes[i]);
-		Com::printF("  Actual Voltage: ", (float)((float)dac_motor_current[dac_channel] * (2.048 / 4096.0)));
+		float voltVal = (float)((float)dac_motor_current[dac_channel] * (2.048 / 4096.0));
+		float percentVal = (voltVal/MCP4728_VOUT_MAX_VOLTS) * 100.0;
+		Com::printF("  Actual Voltage: ", voltVal);
 		Com::printF("V   ");
-		Com::printF("(", ((float)dac_motor_current[dac_channel] * 100 / MCP4728_VOUT_MAX));
+		Com::printF("(", percentVal);
 		Com::printF("%)  ");
 		Com::printF(Com::tSpaceRaw);
 		Com::printF(Com::tColon, dac_motor_current[dac_channel]);

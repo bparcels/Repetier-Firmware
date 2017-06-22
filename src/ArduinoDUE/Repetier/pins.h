@@ -1677,17 +1677,18 @@ AD15 CH15
 #define STEPPER_CURRENT_CONTROL  CURRENT_CONTROL_MCP4728
 
 //////////////////////// MCP4728 stuff
-#define MCP4728_I2C_ADDRESS	0x60 << 1 // Base Address (0x60); Pre-Shifted Left 1 bit for Repetier HAL.
-#define MCP4728_GENERALCALL_ADDRESS  0x00 // General Call Address. Weird, but OK...
-#define MCP4728_CMD_MULTI_WRITE   0B01000000 // Writes DAC Settings, Does not update EEPROM.
-#define MCP4728_CMD_SEQ_WRITE     0B01010000 // Writes DAC Settings, also persists to EEPROM.
-#define MCP4728_CMD_GC_UPDATE     0B00001000 // General Call Update - Update all DAC Outputs (Only way to update DAC Outputs on PrintrBoard Rev F because they tied /LDAC to VDD.
-#define MCP4728_CMD_GC_RESET      0B00000110 // General Call Reset
-#define MCP4728_VREF 		1 // From DataSheet. We will use MCP4728's internal 2.048V as Vref
-#define MCP4728_GAIN		0 // From DataSheet. Use 1x Gain Multiplier (0V - 2.048V);
-#define MCP4728_NUM_CHANNELS    4 // Duh. Specified here in case there's a beefier chip used on some other board someday.
-#define MCP4728_STEPPER_ORDER 	{3,2,1,0} // PrintrBoard wired 'em up backwards. SMH.  X, Y, Z, E
-#define MCP4728_VOUT_MAX	1300 // Limit to prevent output above this voltage (in mV)... i.e. setting 1300 prevents output above 1.3V
+#define MCP4728_I2C_ADDRESS	0x60 << 1						// Base Address (0x60); Pre-Shifted Left 1 bit for Repetier HAL.
+#define MCP4728_GENERALCALL_ADDRESS  0x00					// General Call Address. Weird, but OK...
+#define MCP4728_CMD_MULTI_WRITE   0B01000000				// Writes DAC Settings, Does not update EEPROM.
+#define MCP4728_CMD_SEQ_WRITE     0B01010000				// Writes DAC Settings, also persists to EEPROM.
+#define MCP4728_CMD_GC_UPDATE     0B00001000				// General Call Update - Update all DAC Outputs (Only way to update DAC Outputs on PrintrBoard Rev F because they tied /LDAC to VDD.
+#define MCP4728_CMD_GC_RESET      0B00000110				// General Call Reset
+#define MCP4728_VREF 		1								// From DataSheet. We will use MCP4728's internal 2.048V as Vref
+#define MCP4728_GAIN		0								// From DataSheet. Use 1x Gain Multiplier (0V - 2.048V);
+#define MCP4728_NUM_CHANNELS    4							// Duh. Specified here in case there's a beefier chip used on some other board someday.
+#define MCP4728_STEPPER_ORDER 	{3,2,1,0}					// PrintrBoard wired 'em up backwards. SMH.  X, Y, Z, E
+#define MCP4728_VOUT_MAX 2600								// This was retained to maintain compatibility with the old code... in Inventor Board case, 2600 => 1300mV i.e. 1.3V
+#define MCP4728_VOUT_MAX_VOLTS (MCP4728_VOUT_MAX/2000.0)	// The actual max output voltage, in volts... Divided by 2, then 1000(mV=>V) for the Inventor Board... Presumably just different gain used on others.
 
 ///////////////// SPI Routing Pins (unique to Inventor board - uses mux/demuxes to select chips and route all SPI lines, instead of multiple CS pins)
 #define SPI_OE_1 25
