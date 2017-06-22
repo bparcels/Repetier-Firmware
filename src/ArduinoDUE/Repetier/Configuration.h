@@ -1091,7 +1091,7 @@ Corner can be printed with full speed of 50 mm/s
 Overridden if EEPROM activated.
 */
 #define MAX_JERK 20.0
-#define MAX_ZJERK 0.3
+#define MAX_ZJERK 0.71
 
 /** \brief Number of moves we can cache in advance.
 
@@ -1210,7 +1210,7 @@ matches, the stored values are used to overwrite the settings.
 IMPORTANT: With mode <>0 some changes in Configuration.h are not set any more, as they are
            taken from the EEPROM.
 */
-#define EEPROM_MODE 1
+#define EEPROM_MODE 7
 
 
 /**************** duplicate motor driver ***************
@@ -1326,7 +1326,7 @@ to recalibrate z.
 // This is needful if you have the probe trigger by hand.
 #define Z_PROBE_WAIT_BEFORE_TEST 0
 /** Speed of z-axis in mm/s when probing */
-#define Z_PROBE_SPEED 5
+#define Z_PROBE_SPEED 20
 #define Z_PROBE_XY_SPEED 50
 #define Z_PROBE_SWITCHING_DISTANCE 10 // Distance to safely switch off probe after it was activated
 #define Z_PROBE_REPETITIONS 3 // Repetitions for probing at one point. 
