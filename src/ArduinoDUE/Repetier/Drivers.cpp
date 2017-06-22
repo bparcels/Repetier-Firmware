@@ -247,3 +247,198 @@ void CNCDriver::spindleOnCCW(int32_t rpm)
     HAL::delayMilliseconds(CNC_WAIT_ON_ENABLE);
 }
 #endif
+
+
+//////////////////////////////////////////////////////////////////////////////////
+//                         TMC2130 Driver Support								//
+//////////////////////////////////////////////////////////////////////////////////
+#if (USES_TMC2130_DRIVERS)
+
+// Initialize each stepper object with the correct CS pin
+#if (X_IS_TMC2130)
+Trinamic_TMC2130 Printer::stepperX(X_SPI_CS);
+#endif
+#if (Y_IS_TMC2130)
+Trinamic_TMC2130 Printer::stepperY(Y_SPI_CS);
+#endif
+#if (Z_IS_TMC2130)
+Trinamic_TMC2130 Printer::stepperZ(Z_SPI_CS);
+#endif
+#if (E0_IS_TMC2130)
+Trinamic_TMC2130 Printer::stepperE0(E0_SPI_CS);
+#endif
+#if (E1_IS_TMC2130)
+Trinamic_TMC2130 Printer::stepperE1(E1_SPI_CS);
+#endif
+#if (E2_IS_TMC2130)
+Trinamic_TMC2130 Printer::stepperE2(E2_SPI_CS);
+#endif
+
+// Initalize all drivers with the settings from Configuration.h
+// NOTE: This currently uses 
+void Printer::tmc2130_init() {
+
+#if (X_IS_TMC2130)
+#if MOTHERBOARD == INVENTOR_BOARD	
+	HAL::RouteSPITo(SPI_X);			// For Inventor board, we must first route the SPI
+#endif
+
+	stepperX.init();
+	stepperX.set_mres(X_MICROSTEPS);
+	stepperX.set_IHOLD_IRUN(X_IHOLD, X_IRUN, X_IHOLDDELAY);
+	stepperX.set_I_scale_analog(X_ISCALE);
+	stepperX.set_intpol(1);
+	stepperX.set_tbl(2); // ([0-3]) set comparator blank time to 16, 24, 36 or 54 clocks, 1 or 2 is recommended
+	stepperX.set_toff(3); // ([0-15]) 0: driver disable, 1: use only with TBL>2, 2-15: off time setting during slow decay phase
+	stepperX.set_hstrt(6);
+	stepperX.set_hend(0);
+	stepperX.set_chm(0);
+	stepperX.set_TPOWERDOWN(10);
+	stepperX.set_en_pwm_mode(0);	// Disable stealthchop
+	stepperX.set_TCOOLTHRS(250);
+	stepperX.set_sfilt(0);
+	stepperX.set_sgt(0);
+	// Coolstep
+	stepperX.set_seimin(1);
+	stepperX.set_semin(2);
+	stepperX.set_semax(1);
+	stepperX.set_sedn(1);
+	stepperX.set_seup(9);
+	//	
+	stepperX.set_diag1_int_pushpull(0);
+	stepperX.set_diag1_index(0);
+	stepperX.set_diag1_onstate(0);
+	stepperX.set_diag1_steps_skipped(0);
+	stepperX.set_diag1_stall(1);
+
+#if MOTHERBOARD == INVENTOR_BOARD	
+	HAL::RouteSPITo(SPI_NONE);		// Disconnect from all slaves
+#endif
+#endif
+
+#if (Y_IS_TMC2130)
+#if MOTHERBOARD == INVENTOR_BOARD	
+	HAL::RouteSPITo(SPI_Y);			// For Inventor board, we must first route the SPI
+#endif
+
+	stepperY.init();
+	stepperY.set_mres(Y_MICROSTEPS);
+	stepperY.set_IHOLD_IRUN(Y_IHOLD, Y_IRUN, Y_IHOLDDELAY);
+	stepperY.set_I_scale_analog(Y_ISCALE);
+	stepperY.set_intpol(1);
+	stepperY.set_tbl(2);
+	stepperY.set_toff(3);
+	stepperY.set_hstrt(6);
+	stepperY.set_hend(0);
+	stepperY.set_chm(0);
+	stepperY.set_TPOWERDOWN(10);
+	stepperY.set_en_pwm_mode(0);
+	stepperY.set_TCOOLTHRS(250);
+	stepperY.set_sfilt(0);
+	stepperY.set_sgt(0);
+	// Coolstep
+	stepperY.set_seimin(1);
+	stepperY.set_semin(2);
+	stepperY.set_semax(1);
+	stepperY.set_sedn(1);
+	stepperY.set_seup(9);
+	//
+	stepperY.set_diag1_int_pushpull(0);
+	stepperY.set_diag1_index(0);
+	stepperY.set_diag1_onstate(0);
+	stepperY.set_diag1_steps_skipped(0);
+	stepperY.set_diag1_stall(1);
+
+#if MOTHERBOARD == INVENTOR_BOARD	
+	HAL::RouteSPITo(SPI_NONE);		// Disconnect from all slaves
+#endif
+#endif
+
+#if (Z_IS_TMC2130)
+#if MOTHERBOARD == INVENTOR_BOARD	
+	HAL::RouteSPITo(SPI_Z);			// For Inventor board, we must first route the SPI
+#endif
+
+	stepperZ.init();
+	stepperZ.set_mres(Z_MICROSTEPS);
+	stepperZ.set_IHOLD_IRUN(Z_IHOLD, Z_IRUN, Z_IHOLDDELAY);
+	stepperZ.set_I_scale_analog(Z_ISCALE);
+	stepperZ.set_intpol(1);
+	stepperZ.set_tbl(2);
+	stepperZ.set_toff(3);
+	stepperZ.set_hstrt(2);
+	stepperZ.set_hend(10);
+	stepperZ.set_chm(0);
+	stepperZ.set_TPOWERDOWN(10);
+	stepperZ.set_en_pwm_mode(0);
+	stepperZ.set_TCOOLTHRS(500);
+	stepperZ.set_sfilt(0);
+	stepperZ.set_sgt(0);
+	// Coolstep
+	stepperZ.set_seimin(0);
+	stepperZ.set_semin(2);
+	stepperZ.set_semax(1);
+	stepperZ.set_sedn(1);
+	stepperZ.set_seup(9);
+	//
+	stepperZ.set_diag1_int_pushpull(0);
+	stepperZ.set_diag1_index(0);
+	stepperZ.set_diag1_onstate(0);
+	stepperZ.set_diag1_steps_skipped(0);
+	stepperZ.set_diag1_stall(1);
+
+#if MOTHERBOARD == INVENTOR_BOARD	
+	HAL::RouteSPITo(SPI_NONE);		// Disconnect from all slaves
+#endif
+#endif
+
+#if (E0_IS_TMC2130)
+#if MOTHERBOARD == INVENTOR_BOARD	
+	HAL::RouteSPITo(SPI_E0);			// For Inventor board, we must first route the SPI
+#endif
+	stepperE0.init();
+	stepperE0.set_mres(E0_MICROSTEPS);
+	stepperE0.set_IHOLD_IRUN(E0_IHOLD, E0_IRUN, E0_IHOLDDELAY);
+	stepperE0.set_I_scale_analog(E0_ISCALE);
+	stepperE0.set_tbl(2);
+	stepperE0.set_toff(3);
+	stepperE0.set_hstrt(4);
+	stepperE0.set_hend(1);
+	stepperE0.set_chm(0);
+	stepperE0.set_TPOWERDOWN(10);
+	stepperE0.set_en_pwm_mode(0);
+
+#if MOTHERBOARD == INVENTOR_BOARD	
+	HAL::RouteSPITo(SPI_NONE);		// Disconnect from all slaves
+#endif
+#endif
+
+#if (E1_IS_TMC2130)
+#if MOTHERBOARD == INVENTOR_BOARD	
+	HAL::RouteSPITo(SPI_E1);			// For Inventor board, we must first route the SPI
+#endif
+	stepperE1.init();
+	stepperE1.set_mres(E1_MICROSTEPS);
+	stepperE1.set_IHOLD_IRUN(E1_IHOLD, E1_IRUN, E1_IHOLDDELAY);
+	stepperE1.set_I_scale_analog(E1_ISCALE);
+
+#if MOTHERBOARD == INVENTOR_BOARD	
+	HAL::RouteSPITo(SPI_NONE);		// Disconnect from all slaves
+#endif
+#endif
+
+#if (E2_IS_TMC2130)
+#if MOTHERBOARD == INVENTOR_BOARD	
+	HAL::RouteSPITo(SPI_E2);			// For Inventor board, we must first route the SPI
+#endif
+	stepperE2.init();
+	stepperE2.set_mres(E2_MICROSTEPS);
+	stepperE2.set_IHOLD_IRUN(E2_IHOLD, E2_IRUN, E2_IHOLDDELAY);
+	stepperE2.set_I_scale_analog(E2_ISCALE);
+
+#if MOTHERBOARD == INVENTOR_BOARD	
+	HAL::RouteSPITo(SPI_NONE);		// Disconnect from all slaves
+#endif
+#endif
+}
+#endif

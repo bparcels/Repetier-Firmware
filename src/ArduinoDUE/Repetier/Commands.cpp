@@ -487,123 +487,172 @@ void motorCurrentControlInit() { //Initialize Motor Current
 }
 #endif
 
-
 #if STEPPER_CURRENT_CONTROL == CURRENT_CONTROL_MCP4728
-uint8_t   _intVref[]     = {MCP4728_VREF, MCP4728_VREF, MCP4728_VREF, MCP4728_VREF};
-uint8_t   _gain[]        = {MCP4728_GAIN, MCP4728_GAIN, MCP4728_GAIN, MCP4728_GAIN};
-uint8_t   _powerDown[]   = {0,0,0,0};
-int16_t   dac_motor_current[] =  {0,0,0,0};
 
-uint8_t   _intVrefEp[]   = {MCP4728_VREF, MCP4728_VREF, MCP4728_VREF, MCP4728_VREF};
-uint8_t   _gainEp[]      = {MCP4728_GAIN, MCP4728_GAIN, MCP4728_GAIN, MCP4728_GAIN};
-uint8_t   _powerDownEp[] = {0,0,0,0};
-int16_t    _valuesEp[]   = {0,0,0,0};
+// Gain seems to be set to 2x by defualt, we will force it to x1 (value of 0) since likely won't need over 2.048V
+// I suspect that my problem was reading the values before setting them (trying to ensure SPI functionality before changing anything)
+// But if you read before write, you will set the gains (below) to the default (x2), instead of what is specified in pins.h...
+// thus, the output won't match expectation... so we'll force it to our desired gain
+uint8_t	  forceAllGain = 0;
+
+uint8_t   _intVref[] = { MCP4728_VREF, MCP4728_VREF, MCP4728_VREF, MCP4728_VREF };
+uint8_t   _gain[] = { MCP4728_GAIN, MCP4728_GAIN, MCP4728_GAIN, MCP4728_GAIN };
+uint8_t   _powerDown[] = { 0,0,0,0 };
+int16_t   dac_motor_current[] = { 0,0,0,0 };
+
+uint8_t   _intVrefEp[] = { MCP4728_VREF, MCP4728_VREF, MCP4728_VREF, MCP4728_VREF };
+uint8_t   _gainEp[] = { MCP4728_GAIN, MCP4728_GAIN, MCP4728_GAIN, MCP4728_GAIN };
+uint8_t   _powerDownEp[] = { 0,0,0,0 };
+int16_t    _valuesEp[] = { 0,0,0,0 };
 
 uint8_t   dac_stepper_channel[] = MCP4728_STEPPER_ORDER;
 
 int dacSimpleCommand(uint8_t simple_command) {
-    HAL::i2cStartWait(MCP4728_GENERALCALL_ADDRESS + I2C_WRITE);
-    HAL::i2cWrite(simple_command);
-    HAL::i2cStop();
+	HAL::i2cStartWait(MCP4728_GENERALCALL_ADDRESS + I2C_WRITE);
+	HAL::i2cWrite(simple_command);
+	HAL::i2cStop();
 }
 
 void dacReadStatus() {
-    HAL::delayMilliseconds(500);
-    HAL::i2cStartWait(MCP4728_I2C_ADDRESS | I2C_READ);
+	HAL::delayMilliseconds(500);
+	HAL::i2cStartWait(MCP4728_I2C_ADDRESS | I2C_READ);
 
-    for (int i = 0; i < 8; i++) { // 2 sets of 4 Channels (1 EEPROM, 1 Runtime)
-        uint8_t deviceID = HAL::i2cReadAck();
-        uint8_t  hiByte  = HAL::i2cReadAck();
-        uint8_t  loByte  = ((i < 7) ? HAL::i2cReadAck() : HAL::i2cReadNak());
+	for (int i = 0; i < 8; i++) { // 2 sets of 4 Channels (1 EEPROM, 1 Runtime)
+		uint8_t deviceID = HAL::i2cReadAck();
+		uint8_t  hiByte = HAL::i2cReadAck();
+		uint8_t  loByte = ((i < 7) ? HAL::i2cReadAck() : HAL::i2cReadNak());
 
-        uint8_t isEEPROM = (deviceID & 0B00001000) >> 3;
-        uint8_t channel  = (deviceID & 0B00110000) >> 4;
-        if (isEEPROM == 1) {
-            _intVrefEp[channel] = (hiByte & 0B10000000) >> 7;
-            _gainEp[channel] = (hiByte & 0B00010000) >> 4;
-            _powerDownEp[channel] = (hiByte & 0B01100000) >> 5;
-            _valuesEp[channel] = word((hiByte & 0B00001111), loByte);
-        } else {
-            _intVref[channel] = (hiByte & 0B10000000) >> 7;
-            _gain[channel] = (hiByte & 0B00010000) >> 4;
-            _powerDown[channel] = (hiByte & 0B01100000) >> 5;
-            dac_motor_current[channel] = word((hiByte & 0B00001111), loByte);
-        }
-    }
+		uint8_t isEEPROM = (deviceID & 0B00001000) >> 3;
+		uint8_t channel = (deviceID & 0B00110000) >> 4;
+		if (isEEPROM == 1) {
+			_intVrefEp[channel] = (hiByte & 0B10000000) >> 7;
+			_gainEp[channel] = (hiByte & 0B00010000) >> 4;
+			_powerDownEp[channel] = (hiByte & 0B01100000) >> 5;
+			_valuesEp[channel] = word((hiByte & 0B00001111), loByte);
+		}
+		else {
+			_intVref[channel] = (hiByte & 0B10000000) >> 7;
+			_gain[channel] = (hiByte & 0B00010000) >> 4;
+			_powerDown[channel] = (hiByte & 0B01100000) >> 5;
+			dac_motor_current[channel] = word((hiByte & 0B00001111), loByte);
+		}
+	}
 
-    HAL::i2cStop();
+	HAL::i2cStop();
 }
 
 void dacAnalogUpdate(bool saveEEPROM = false) {
-    uint8_t dac_write_cmd = MCP4728_CMD_SEQ_WRITE;
+	uint8_t dac_write_cmd = MCP4728_CMD_SEQ_WRITE;
 
-    HAL::i2cStartWait(MCP4728_I2C_ADDRESS + I2C_WRITE);
-    if (saveEEPROM) HAL::i2cWrite(dac_write_cmd);
+	HAL::i2cStartWait(MCP4728_I2C_ADDRESS + I2C_WRITE);
+	if (saveEEPROM) HAL::i2cWrite(dac_write_cmd);
 
-    for (int i = 0; i < MCP4728_NUM_CHANNELS; i++) {
-        uint16_t level = dac_motor_current[i];
+	for (int i = 0; i < MCP4728_NUM_CHANNELS; i++) {
+		uint16_t level = dac_motor_current[i];
 
-        uint8_t highbyte = ( _intVref[i] << 7 | _gain[i] << 4 | (uint8_t)((level) >> 8) );
-        uint8_t lowbyte =  ( (uint8_t) ((level) & 0xff) );
-        dac_write_cmd = MCP4728_CMD_MULTI_WRITE | (i << 1);
+		uint8_t highbyte = (_intVref[i] << 7 | forceAllGain << 4 | (uint8_t)((level) >> 8));
+		uint8_t lowbyte = ((uint8_t)((level) & 0xff));
+		dac_write_cmd = MCP4728_CMD_MULTI_WRITE | (i << 1);
 
-        if (!saveEEPROM) HAL::i2cWrite(dac_write_cmd);
-        HAL::i2cWrite(highbyte);
-        HAL::i2cWrite(lowbyte);
-    }
+		if (!saveEEPROM) HAL::i2cWrite(dac_write_cmd);
+		HAL::i2cWrite(highbyte);
+		HAL::i2cWrite(lowbyte);
+	}
 
-    HAL::i2cStop();
+	HAL::i2cStop();
 
-    // Instruct the MCP4728 to reflect our updated value(s) on its DAC Outputs
-    dacSimpleCommand((uint8_t)MCP4728_CMD_GC_UPDATE); // MCP4728 General Command Software Update (Update all DAC Outputs to reflect settings)
-
-    // if (saveEEPROM) dacReadStatus(); // Not necessary, just a read-back sanity check.
+	// Instruct the MCP4728 to reflect our updated value(s) on its DAC Outputs
+	dacSimpleCommand((uint8_t)MCP4728_CMD_GC_UPDATE); // MCP4728 General Command Software Update (Update all DAC Outputs to reflect settings)
 }
 
 void dacCommitEeprom() {
-    dacAnalogUpdate(true);
-    dacReadStatus(); // Refresh EEPROM Values with values actually stored in EEPROM. .
+	dacAnalogUpdate(true);
+	dacReadStatus(); // Refresh EEPROM Values with values actually stored in EEPROM. .
 }
 
 void dacPrintSet(int16_t dacChannelSettings[], const char* dacChannelPrefixes[]) {
-    for (int i = 0; i < MCP4728_NUM_CHANNELS; i++) {
-        uint8_t dac_channel = dac_stepper_channel[i]; // DAC Channel is a mapped lookup.
-        Com::printF(dacChannelPrefixes[i], ((float)dacChannelSettings[dac_channel] * 100 / MCP4728_VOUT_MAX));
-        Com::printF(Com::tSpaceRaw);
-        Com::printFLN(Com::tColon,dacChannelSettings[dac_channel]);
-    }
+	for (int i = 0; i < MCP4728_NUM_CHANNELS; i++) {
+		uint8_t dac_channel = dac_stepper_channel[i]; // DAC Channel is a mapped lookup.
+		Com::printF(dacChannelPrefixes[i], ((float)dacChannelSettings[dac_channel] * 100 / MCP4728_VOUT_MAX));
+		Com::printF(Com::tSpaceRaw);
+		Com::printFLN(Com::tColon, dacChannelSettings[dac_channel]);
+	}
 }
 
 void dacPrintValues() {
-    const char* dacChannelPrefixes[] = {Com::tSpaceXColon, Com::tSpaceYColon, Com::tSpaceZColon, Com::tSpaceEColon};
+	const char* dacChannelPrefixes[] = { Com::tSpaceXColon, Com::tSpaceYColon, Com::tSpaceZColon, Com::tSpaceEColon };
 
-    Com::printFLN(Com::tMCPEpromSettings);
-    dacPrintSet(_valuesEp, dacChannelPrefixes); // Once for the EEPROM set
+	Com::printFLN(Com::tMCPEpromSettings);
+	dacPrintSet(_valuesEp, dacChannelPrefixes); // Once for the EEPROM set
 
-    Com::printFLN(Com::tMCPCurrentSettings);
-    dacPrintSet(dac_motor_current, dacChannelPrefixes); // And another for the RUNTIME set
+	Com::printFLN(Com::tMCPCurrentSettings);
+	dacPrintSet(dac_motor_current, dacChannelPrefixes); // And another for the RUNTIME set
 }
 
-void setMotorCurrent( uint8_t xyz_channel, uint16_t level ) {
-    if (xyz_channel >= MCP4728_NUM_CHANNELS) return;
-    uint8_t stepper_channel = dac_stepper_channel[xyz_channel];
-    dac_motor_current[stepper_channel] = level < MCP4728_VOUT_MAX ? level : MCP4728_VOUT_MAX;
-    dacAnalogUpdate();
+void setMotorCurrent(uint8_t xyz_channel, uint16_t level) {
+	if (xyz_channel >= MCP4728_NUM_CHANNELS) return;
+	uint8_t stepper_channel = dac_stepper_channel[xyz_channel];
+	dac_motor_current[stepper_channel] = level < MCP4728_VOUT_MAX ? level : MCP4728_VOUT_MAX;
+	dacAnalogUpdate();
 }
 
-void setMotorCurrentPercent( uint8_t channel, float level) {
-    uint16_t raw_level = ( level * MCP4728_VOUT_MAX / 100 );
-    setMotorCurrent(channel,raw_level);
+void setMotorCurrentPercent(uint8_t channel, float level) {
+	uint16_t raw_level = (level * MCP4728_VOUT_MAX / 100);
+	setMotorCurrent(channel, raw_level);
+}
+
+// Function to set DAC output voltages by specifying the actual voltage
+// Assumes we force the gain to x1, an internal reference, and a 3.3V system)
+void setDACVoltageDirectly(uint8_t channel, float level) {
+	uint16_t raw_level = 4095 * (level / 2.048);
+	if (raw_level > MCP4728_VOUT_MAX) raw_level = MCP4728_VOUT_MAX;
+	if (raw_level < 0) raw_level = 0;
+	setMotorCurrent(channel, raw_level);
+}
+
+// Functions to display DAC output voltages and additional information directly
+void dacPrintVoltages() {
+	const char* dacChannelPrefixes[] = { Com::tSpaceXColon, Com::tSpaceYColon, Com::tSpaceZColon, Com::tSpaceEColon };
+
+	Com::printFLN(Com::tMCPEpromSettings);
+	for (int i = 0; i < MCP4728_NUM_CHANNELS; i++) {
+		uint8_t dac_channel = dac_stepper_channel[i]; // DAC Channel is a mapped lookup.
+		Com::printF(dacChannelPrefixes[i]);
+		Com::printF("  Actual Voltage: ", (float)((float)_valuesEp[dac_channel] * (2.048 / 4096.0)));
+		Com::printF("V   ");
+		Com::printF("(", ((float)_valuesEp[dac_channel] * 100 / MCP4728_VOUT_MAX));
+		Com::printF("%)  ");
+		Com::printF(Com::tSpaceRaw);
+		Com::printF(Com::tColon, _valuesEp[dac_channel]);
+		Com::printF("   VRef: ", _intVrefEp[dac_channel]);
+		Com::printF("   Gain: ", _gainEp[dac_channel]);
+		Com::printFLN("   PwrDown: ", _powerDownEp[dac_channel]);
+	}
+
+	Com::printFLN(Com::tMCPCurrentSettings);
+	for (int i = 0; i < MCP4728_NUM_CHANNELS; i++) {
+		uint8_t dac_channel = dac_stepper_channel[i]; // DAC Channel is a mapped lookup.
+		Com::printF(dacChannelPrefixes[i]);
+		Com::printF("  Actual Voltage: ", (float)((float)dac_motor_current[dac_channel] * (2.048 / 4096.0)));
+		Com::printF("V   ");
+		Com::printF("(", ((float)dac_motor_current[dac_channel] * 100 / MCP4728_VOUT_MAX));
+		Com::printF("%)  ");
+		Com::printF(Com::tSpaceRaw);
+		Com::printF(Com::tColon, dac_motor_current[dac_channel]);
+		Com::printF("   VRef: ", _intVref[dac_channel]);
+		Com::printF("   Gain: ", _gain[dac_channel]);
+		Com::printFLN("   PwrDown: ", _powerDown[dac_channel]);
+	}
 }
 
 void motorCurrentControlInit() { //Initialize MCP4728 Motor Current
-    HAL::i2cInit(400000); // Initialize the i2c bus.
-    dacSimpleCommand((uint8_t)MCP4728_CMD_GC_RESET); // MCP4728 General Command Reset
-    dacReadStatus(); // Load Values from EEPROM.
+	HAL::i2cInit(400000); // Initialize the i2c bus.
+	dacSimpleCommand((uint8_t)MCP4728_CMD_GC_RESET); // MCP4728 General Command Reset
+	dacReadStatus(); // Load Values from EEPROM.
 
-    for(int i = 0; i < MCP4728_NUM_CHANNELS; i++) {
-        setMotorCurrent(dac_stepper_channel[i], _valuesEp[i] ); // This is not strictly necessary, but serves as a good sanity check to ensure we're all on the same page.
-    }
+	for (int i = 0; i < MCP4728_NUM_CHANNELS; i++) {
+		setMotorCurrent(dac_stepper_channel[i], _valuesEp[i]); // This is not strictly necessary, but serves as a good sanity check to ensure we're all on the same page.
+	}
 }
 #endif
 
@@ -2467,6 +2516,28 @@ void Commands::processMCode(GCode *com) {
             }
 #endif            
             break;	
+
+		//////////////////////////////  Custom M-Code to set the DAC output voltages directly //////////////////////////////
+		// M906 => Set DAC output voltages using axis codes. Values are interpreted directly as the 
+		// voltage to output (i.e. between 0V and MCP4728_VOUT_MAX). Anything above MCP4728_VOUT_MAX
+		// will be capped, and set to MCP4728_VOUT_MAX.
+		case 906:
+			#if STEPPER_CURRENT_CONTROL == CURRENT_CONTROL_MCP4728
+				// If "S" is specified, use that as initial default value, then update each axis w/ specific values as found later.
+				if (com->hasS()) {
+					for (int i = 0; i < 10; i++) {
+						setDACVoltageDirectly(i, com->S);
+					}
+				}
+
+				if (com->hasX()) setDACVoltageDirectly(0, (float)com->X);
+				if (com->hasY()) setDACVoltageDirectly(1, (float)com->Y);
+				if (com->hasZ()) setDACVoltageDirectly(2, (float)com->Z);
+				if (com->hasE()) setDACVoltageDirectly(3, (float)com->E);
+			#endif			
+			break;
+			////////////////////////////// End of custom M-Code //////////////////////////////
+
         case 907: { // M907 Set digital trimpot/DAC motor current using axis codes.
 #if STEPPER_CURRENT_CONTROL != CURRENT_CONTROL_MANUAL
                 // If "S" is specified, use that as initial default value, then update each axis w/ specific values as found later.
@@ -2493,7 +2564,10 @@ void Commands::processMCode(GCode *com) {
             break;
         case 909: { // M909 Read digital trimpot settings.
 #if STEPPER_CURRENT_CONTROL == CURRENT_CONTROL_MCP4728
-                dacPrintValues();
+				// NOTE: Set to printout the actual voltages and MCP settings, as opposed to a current scaling... 
+				// To use the old style, comment out dacPrintVoltages, and uncomment the line below.
+                //dacPrintValues();	
+				dacPrintVoltages();
 #endif
             }
             break;

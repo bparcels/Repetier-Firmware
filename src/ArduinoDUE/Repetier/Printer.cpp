@@ -1380,6 +1380,15 @@ extruder[5].jamLastSignal = READ(EXT5_JAM_PIN);
 	Commands::printCurrentPosition();
 #endif // DRIVE_SYSTEM
 	Extruder::selectExtruderById(0);
+	
+
+#if MOTHERBOARD == 777		/////////// Inventor board SPI routing init
+	HAL::InitSPIRouting();
+#endif
+
+#if USES_TMC2130_DRIVERS	/////////// TMC2130 Driver init
+	tmc2130_init();
+#endif
 
 #if FEATURE_SERVO                   // set servos to neutral positions at power_up
   #if defined(SERVO0_NEUTRAL_POS) && SERVO0_NEUTRAL_POS >= 500

@@ -818,6 +818,22 @@ class HAL
     // Write from buffer to SPI
 
     static void spiSendBlock(uint8_t token, const uint8_t* buf);
+
+#if MOTHERBOARD == INVENTOR_BOARD
+	//////////// Inventor board SPI Routing ////////////////
+	// Routing functions
+	static void InitSPIRouting();
+	static void RouteSPITo(int chipNum);
+	// Routing Defines
+	#define SPI_NONE 0
+	#define SPI_X 1
+	#define SPI_Y 2
+	#define SPI_Z 3
+	#define SPI_E0 4
+	#define SPI_E1 5
+	#define SPI_E2 6
+#endif
+
 #endif  /*DUE_SOFTWARE_SPI*/
 
     // I2C Support

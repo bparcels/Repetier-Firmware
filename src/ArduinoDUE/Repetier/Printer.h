@@ -1319,6 +1319,30 @@ public:
     static void pausePrint();
     static void continuePrint();
     static void stopPrint();
+	
+	
+	/////// TMC2130 Driver Support ///////	
+#if (USES_TMC2130_DRIVERS)
+	static void tmc2130_init();
+#if (X_IS_TMC2130)
+	static Trinamic_TMC2130 stepperX;
+#endif
+#if (Y_IS_TMC2130)
+	static Trinamic_TMC2130 stepperY;
+#endif
+#if (Z_IS_TMC2130)
+	static Trinamic_TMC2130 stepperZ;
+#endif
+#if (E0_IS_TMC2130)
+	static Trinamic_TMC2130 stepperE0;
+#endif
+#if (E1_IS_TMC2130)
+	static Trinamic_TMC2130 stepperE1;
+#endif
+#if (E2_IS_TMC2130)
+	static Trinamic_TMC2130 stepperE2;
+#endif
+#endif
 };
 
 #endif // PRINTER_H_INCLUDED

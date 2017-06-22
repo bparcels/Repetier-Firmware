@@ -31,11 +31,12 @@ STEPPER_CURRENT_CONTROL
   arm does not have a eeprom build in. Therefore boards can add a
   eeprom. Board definition must set the right type of eeprom
 */
-
 #define EEPROM_NONE 0
 #define EEPROM_I2C  1
 #define EEPROM_SPI_ALLIGATOR 2
 #define EEPROM_SDCARD 3
+
+#define INVENTOR_BOARD 777
 
 #if MOTHERBOARD == 401
 #ifndef __SAM3X8E__
@@ -1666,7 +1667,7 @@ AD15 CH15
 * Innovo Inventor Board 
 * http://www.innovo3d.co
 ******************************************************************/
-#if MOTHERBOARD == 777
+#if MOTHERBOARD == INVENTOR_BOARD
 #ifndef __SAM3X8E__
 #error Oops!  Make sure you have 'Arduino Due' selected from the 'Tools -> Boards' menu.
 #endif
@@ -1686,7 +1687,7 @@ AD15 CH15
 #define MCP4728_GAIN		0 // From DataSheet. Use 1x Gain Multiplier (0V - 2.048V);
 #define MCP4728_NUM_CHANNELS    4 // Duh. Specified here in case there's a beefier chip used on some other board someday.
 #define MCP4728_STEPPER_ORDER 	{3,2,1,0} // PrintrBoard wired 'em up backwards. SMH.  X, Y, Z, E
-#define MCP4728_VOUT_MAX	4095 //3520 // 1.76 Volts * 2000. See DataSheets for the math. Value should be between 0-4095
+#define MCP4728_VOUT_MAX	1300 // Limit to prevent output above this voltage (in mV)... i.e. setting 1300 prevents output above 1.3V
 
 ///////////////// SPI Routing Pins (unique to Inventor board - uses mux/demuxes to select chips and route all SPI lines, instead of multiple CS pins)
 #define SPI_OE_1 25
@@ -1701,36 +1702,36 @@ AD15 CH15
 /*****************************************************************
 * Arduino Due Pin Assignments
 ******************************************************************/
-
 #define ORIG_X_STEP_PIN     24
 #define ORIG_X_DIR_PIN      23
 #define ORIG_X_MIN_PIN      28
-#define ORIG_X_MAX_PIN      34 
+#define ORIG_X_MAX_PIN      28	// Set to X_MIN... using StallGuard, we connect both to the same pin. On the board, the actual X_MAX is pin 34
 #define ORIG_X_ENABLE_PIN   26
 
 #define ORIG_Y_STEP_PIN     17 
 #define ORIG_Y_DIR_PIN      16
 #define ORIG_Y_MIN_PIN      30
-#define ORIG_Y_MAX_PIN      36
+#define ORIG_Y_MAX_PIN      30	// Set to Y_MIN... using StallGuard, we connect both to the same pin. On the board, the actual Y_MAX is pin 36
 #define ORIG_Y_ENABLE_PIN   22
 
 #define ORIG_Z_STEP_PIN     2
 #define ORIG_Z_DIR_PIN      3
 #define ORIG_Z_MIN_PIN      32
-#define ORIG_Z_MAX_PIN      38
+#define ORIG_Z_MAX_PIN      32	// Set to Z_MIN... using StallGuard, we connect both to the same pin. On the board the actual Z_MAX is pin 38
 #define ORIG_Z_ENABLE_PIN   15
 
+#define ORIG_Z_PROBE_PIN	32	// for Contact probe, use 38 (Z_MAX).... for Stallguard, use 32 (Z_MIN)...
 
-// Pins start to get crazy... the ADC pin 4 is called A3, D57, AD4, A.6, 82... I don't pretend to understand, but these work
-// All ADC pins refer to SAM3X8E Pin names, not the A0-A11 that is actually on the DUE (just to make things more fun)
+// Pins start to get crazy... the ADC pin 4 is called A3, D57, AD4, A.6, 82... I don't pretend to get it, but the pins below work!
+// All ADC pins refer to SAM3X8E Pin names, not the A0-A11 that is actually on the DUE (just to make things more fun I assume)
 // Reference to the insanity: http://www.robgray.com/temp/Due-pinout-WEB.png
 #define HEATER_0_PIN     13
-#define TEMP_0_PIN       4		// AD4
 #define HEATER_1_PIN     7 
-#define TEMP_1_PIN       3		// AD3
 #define HEATER_2_PIN     12
+#define HEATER_3_PIN     11		// This is actually case LEDs on the Inventor board, not a third heater
+#define TEMP_0_PIN       4		// AD4
+#define TEMP_1_PIN       3		// AD3
 #define TEMP_2_PIN       10		// AD10
-//#define HEATER_3_PIN     11		// This is actually case LEDs on the Inventor board, not a third heater   ZOT!
 #define TEMP_3_PIN       11		// AD11
 #define TEMP_4_PIN       12		// AD12
 

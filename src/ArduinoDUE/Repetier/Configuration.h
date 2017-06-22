@@ -176,7 +176,7 @@ For xy gantry use 2*belt moved!
 Overridden if EEPROM activated.*/
 #define YAXIS_STEPS_PER_MM 200
 /** \brief Number of steps for a 1mm move in z direction  Overridden if EEPROM activated.*/
-#define ZAXIS_STEPS_PER_MM 800
+#define ZAXIS_STEPS_PER_MM 400
 #endif
 
 // ##########################################################################################
@@ -464,12 +464,8 @@ temperature*8.
 If you have a PTC thermistor instead of a NTC thermistor, keep the adc values increasing and use thermistor types 50-52 instead of 5-7!
 */
 /** Number of entries in the user thermistor table 0. Set to 0 to disable it. */
-#define NUM_TEMPS_USERTHERMISTOR0 28
-#define USER_THERMISTORTABLE0  {\
-  {1*4,864*8},{21*4,300*8},{25*4,290*8},{29*4,280*8},{33*4,270*8},{39*4,260*8},{46*4,250*8},{54*4,240*8},{64*4,230*8},{75*4,220*8},\
-  {90*4,210*8},{107*4,200*8},{128*4,190*8},{154*4,180*8},{184*4,170*8},{221*4,160*8},{265*4,150*8},{316*4,140*8},{375*4,130*8},\
-  {441*4,120*8},{513*4,110*8},{588*4,100*8},{734*4,80*8},{856*4,60*8},{938*4,40*8},{986*4,20*8},{1008*4,0*8},{1018*4,-20*8}	}
-
+#define NUM_TEMPS_USERTHERMISTOR0 0
+#define USER_THERMISTORTABLE0 {}
 /** Number of entries in the user thermistor table 1. Set to 0 to disable it. */
 #define NUM_TEMPS_USERTHERMISTOR1 0
 #define USER_THERMISTORTABLE1  {}
@@ -499,7 +495,7 @@ The capacitor is for reducing noise from long thermistor cable. If you don't hav
 
 If you need the generic table, uncomment the following define.
 */
-//#define USE_GENERIC_THERMISTORTABLE_1
+#define USE_GENERIC_THERMISTORTABLE_1
 
 /* Some examples for different thermistors:
 
@@ -548,7 +544,7 @@ See http://reprap.org/wiki/MeasuringThermistorBeta for more details.
 #define GENERIC_THERM3_R2 4700
 
 /** Supply voltage to ADC, can be changed by setting ANALOG_REF below to different value. */
-#define GENERIC_THERM_VREF 3.3
+#define GENERIC_THERM_VREF 5
 /** Number of entries in generated table. One entry takes 4 bytes. Higher number of entries increase computation time too.
 Value is used for all generic tables created. */
 #define GENERIC_THERM_NUM_ENTRIES 33
@@ -617,8 +613,8 @@ A good start is 30 lower then the optimal value. You need to leave room for cool
 #define HEATED_BED_PREHEAT_TEMP 55
 
 /** Extreme values to detect defect thermistors. */
-#define MIN_DEFECT_TEMPERATURE -10
-#define MAX_DEFECT_TEMPERATURE 300
+#define MIN_DEFECT_TEMPERATURE -15
+#define MAX_DEFECT_TEMPERATURE 400
 
 //How many milliseconds a hot end will preheat before starting to check the
 //temperature. This value should NOT be set to the time it takes the
@@ -716,7 +712,7 @@ on this endstop.
 
 #define MIN_HARDWARE_ENDSTOP_X true
 #define MIN_HARDWARE_ENDSTOP_Y true
-#define MIN_HARDWARE_ENDSTOP_Z false
+#define MIN_HARDWARE_ENDSTOP_Z true
 #define MAX_HARDWARE_ENDSTOP_X false
 #define MAX_HARDWARE_ENDSTOP_Y false
 #define MAX_HARDWARE_ENDSTOP_Z true
@@ -799,7 +795,7 @@ on this endstop.
 // If EEPROM is enabled these values will be overridden with the values in the EEPROM
 #define X_MAX_LENGTH 300
 #define Y_MAX_LENGTH 300
-#define Z_MAX_LENGTH 290
+#define Z_MAX_LENGTH 210
 
 // Coordinates for the minimum axis. Can also be negative if you want to have the bed start at 0 and the printer can go to the left side
 // of the bed. Maximum coordinate is given by adding the above X_MAX_LENGTH values.
@@ -824,7 +820,7 @@ on this endstop.
 #elif (MOTHERBOARD==500) || (MOTHERBOARD==501) || (MOTHERBOARD==502) // Alligator boards
 //#define MOTOR_CURRENT {130,130,130,110,110,110,110} // expired method
 #define MOTOR_CURRENT_PERCENT {51,51,51,44,44,44,44}
-#elif (MOTHERBOARD==777) // Inventor board
+#elif (MOTHERBOARD==INVENTOR_BOARD) // Inventor board
 //#define MOTOR_CURRENT {130,130,130,110,110,110,110} // expired method
 #define MOTOR_CURRENT_PERCENT {30,30,40,0}			// ZOT - Not currently used
 #endif
@@ -1026,7 +1022,7 @@ This is like reducing your 1/16th microstepping to 1/8 or 1/4. It is much cheape
 additional stepper interrupts with all it's overhead. As a result you can go as high as
 40000Hz.
 */
-#define STEP_DOUBLER_FREQUENCY 80000
+#define STEP_DOUBLER_FREQUENCY 100000
 /** If you need frequencies off more then 30000 you definitely need to enable this. If you have only 1/8 stepping
 enabling this may cause to stall your moves when 20000Hz is reached.
 */
@@ -1214,7 +1210,7 @@ matches, the stored values are used to overwrite the settings.
 IMPORTANT: With mode <>0 some changes in Configuration.h are not set any more, as they are
            taken from the EEPROM.
 */
-#define EEPROM_MODE 0
+#define EEPROM_MODE 7
 
 
 /**************** duplicate motor driver ***************
@@ -1316,15 +1312,15 @@ to recalibrate z.
 */
 #define Z_PROBE_Z_OFFSET_MODE 0
 
-#define FEATURE_Z_PROBE 0
+#define FEATURE_Z_PROBE 1
 // Especially if you have more then 1 extruder acting as z probe this is important!
 #define EXTRUDER_IS_Z_PROBE 1
-#define Z_PROBE_PIN ORIG_Z_MAX_PIN
+#define Z_PROBE_PIN ORIG_Z_PROBE_PIN
 #define Z_PROBE_PULLUP 1
 #define Z_PROBE_ON_HIGH 0
 #define Z_PROBE_X_OFFSET 0
 #define Z_PROBE_Y_OFFSET 0
-#define Z_PROBE_BED_DISTANCE 5.0 // Higher than max bed level distance error in mm
+#define Z_PROBE_BED_DISTANCE 10.0 // Higher than max bed level distance error in mm
 
 // Waits for a signal to start. Valid signals are probe hit and ok button.
 // This is needful if you have the probe trigger by hand.
@@ -1703,12 +1699,12 @@ Values must be in range 1..255
 #define MOTOR_DRIVER_1(var) StepperDriver<E1_STEP_PIN, E1_DIR_PIN, E1_ENABLE_PIN, false, false> var(100.0f,5.0f)
 
 
-// ###############################################################################
-// ##                         TMC2130 Driver Support                            ##
-// ###############################################################################
-#define USES_TMC2130_DRIVERS true	
 
-// ################ Trinamic Axis Settings################
+//////////////////////////////////////////////////////////////////////////////////
+//                         TMC2130 Driver Support								//
+//////////////////////////////////////////////////////////////////////////////////
+#define USES_TMC2130_DRIVERS true	
+/////// Trinamic Axis Settings ///////
 #if USES_TMC2130_DRIVERS
 #include "TMCLib\Trinamic_TMC2130.h"
 
@@ -1718,6 +1714,7 @@ Values must be in range 1..255
 #define X_IHOLDDELAY 6		// 0-15
 #define X_ISCALE     1		// 0: Internal ref, 1: Analog voltage used as reference
 #define X_MICROSTEPS 16		// number of microsteps
+#define X_SPI_CS	 SPI_CS	// The chip select pin for this axis driver
 
 #define Y_IS_TMC2130 true
 #define Y_IHOLD      10		// 0-31
@@ -1725,6 +1722,7 @@ Values must be in range 1..255
 #define Y_IHOLDDELAY 6		// 0-15
 #define Y_ISCALE     1		//  0: Internal ref, 1: Analog voltage used as reference
 #define Y_MICROSTEPS 16		// number of microsteps
+#define Y_SPI_CS	 SPI_CS	// The chip select pin for this axis driver
 
 #define Z_IS_TMC2130 true
 #define Z_IHOLD      15		// 0-31
@@ -1732,6 +1730,7 @@ Values must be in range 1..255
 #define Z_IHOLDDELAY 6		// 0-15
 #define Z_ISCALE     1		//  0: Internal ref, 1: Analog voltage used as reference
 #define Z_MICROSTEPS 16		// number of microsteps
+#define Z_SPI_CS	 SPI_CS	// The chip select pin for this axis driver
 
 #define E0_IS_TMC2130 false
 #define E0_IHOLD      10	// 0-31
@@ -1739,6 +1738,7 @@ Values must be in range 1..255
 #define E0_IHOLDDELAY 6		// 0-15
 #define E0_ISCALE     1		// 0: Internal ref, 1: Analog voltage used as reference
 #define E0_MICROSTEPS 16	// number of microsteps
+#define E0_SPI_CS	 SPI_CS	// The chip select pin for this axis driver
 
 #define E1_IS_TMC2130 false
 #define E1_IHOLD      10	// 0-31
@@ -1746,6 +1746,7 @@ Values must be in range 1..255
 #define E1_IHOLDDELAY 6		// 0-15
 #define E1_ISCALE     1		// 0: Internal ref, 1: Analog voltage used as reference
 #define E1_MICROSTEPS 16	// number of microsteps
+#define E1_SPI_CS	 SPI_CS	// The chip select pin for this axis driver
 
 #define E2_IS_TMC2130 false
 #define E2_IHOLD      10	// 0-31
@@ -1753,8 +1754,9 @@ Values must be in range 1..255
 #define E2_IHOLDDELAY 6		// 0-15
 #define E2_ISCALE     1		// 0: Internal ref, 1: Analog voltage used as reference
 #define E2_MICROSTEPS 16	// number of microsteps
+#define E2_SPI_CS	 SPI_CS	// The chip select pin for this axis driver
 #endif
-// ################ End Trinamic Axis Settings ################
+/////// End Trinamic Axis Settings ///////
 
 /*
   You can expand firmware functionality with events and you own event handler.
