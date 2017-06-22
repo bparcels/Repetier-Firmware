@@ -93,6 +93,12 @@
     <ClInclude Include="uimenu.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="TMCLib\Trinamic_TMC2130.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="TMCLib\Trinamic_TMC2130_registers.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="BedLeveling.cpp">
@@ -135,6 +141,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="uilang.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="TMCLib\Trinamic_TMC2130.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

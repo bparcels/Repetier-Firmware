@@ -565,7 +565,7 @@ void dacCommitEeprom() {
     dacReadStatus(); // Refresh EEPROM Values with values actually stored in EEPROM. .
 }
 
-void dacPrintSet(int dacChannelSettings[], const char* dacChannelPrefixes[]) {
+void dacPrintSet(int16_t dacChannelSettings[], const char* dacChannelPrefixes[]) {
     for (int i = 0; i < MCP4728_NUM_CHANNELS; i++) {
         uint8_t dac_channel = dac_stepper_channel[i]; // DAC Channel is a mapped lookup.
         Com::printF(dacChannelPrefixes[i], ((float)dacChannelSettings[dac_channel] * 100 / MCP4728_VOUT_MAX));
