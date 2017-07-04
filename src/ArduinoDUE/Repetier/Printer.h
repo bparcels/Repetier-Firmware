@@ -1319,7 +1319,11 @@ public:
     static void pausePrint();
     static void continuePrint();
     static void stopPrint();
-	
+
+	/////// LIS3DH Accelerometer Z-Probe Support ////////
+#if USES_LIS3DH_ZPROBE
+	static Adafruit_LIS3DH accelerometer_probe;	
+#endif
 	
 	/////// TMC2130 Driver Support ///////	
 #if (USES_TMC2130_DRIVERS)

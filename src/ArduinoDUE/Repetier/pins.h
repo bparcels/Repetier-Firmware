@@ -1717,11 +1717,11 @@ AD15 CH15
 
 #define ORIG_Z_STEP_PIN     2
 #define ORIG_Z_DIR_PIN      3
-#define ORIG_Z_MIN_PIN      32
-#define ORIG_Z_MAX_PIN      32	// Set to Z_MIN... using StallGuard, we connect both to the same pin. On the board the actual Z_MAX is pin 38
+#define ORIG_Z_MIN_PIN      38  // Set to Z_MAX... using StallGuard, we connect both to the same pin. On the board the actual Z_MIN is pin 32
+#define ORIG_Z_MAX_PIN      38	
 #define ORIG_Z_ENABLE_PIN   15
 
-#define ORIG_Z_PROBE_PIN	32	// for Contact probe, use 38 (Z_MAX).... for Stallguard, use 32 (Z_MIN)...
+#define ORIG_Z_PROBE_PIN	32	// for Stallguard/Conductive probe, use 38 (Z_MAX).... for Accelerometer use 32 (Z_MIN)...
 
 // Pins start to get crazy... the ADC pin 4 is called A3, D57, AD4, A.6, 82... I don't pretend to get it, but the pins below work!
 // All ADC pins refer to SAM3X8E Pin names, not the A0-A11 that is actually on the DUE (just to make things more fun I assume)

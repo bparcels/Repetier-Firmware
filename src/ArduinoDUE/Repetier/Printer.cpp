@@ -18,6 +18,9 @@
 
 #include "Repetier.h"
 
+#if USES_LIS3DH_ZPROBE
+Adafruit_LIS3DH Printer::accelerometer_probe = Adafruit_LIS3DH();
+#endif
 #if USE_ADVANCE
 ufast8_t Printer::maxExtruderSpeed;            ///< Timer delay for end extruder speed
 volatile int Printer::extruderStepsNeeded; ///< This many extruder steps are still needed, <0 = reverse steps needed.
@@ -1389,6 +1392,30 @@ extruder[5].jamLastSignal = READ(EXT5_JAM_PIN);
 #if USES_TMC2130_DRIVERS	/////////// TMC2130 Driver init
 	tmc2130_init();
 #endif
+
+
+#if USES_LIS3DH_ZPROBE		/////////// TMC2130 Driver init
+	
+	if (!accelerometer_probe.begin()) {
+		Com::printF(PSTR("Failed to connect to accelerometer (LIS3DH)..."));
+	}
+	else
+	{
+		Com::printF(PSTR("Connected to accelerometer successfully (LIS3DH)..."));
+	}
+	//flag8_t click = Printer::accelerometer.getClick();
+	//flag8_t src = Printer::accelerometer.getInt1Src();
+	accelerometer_probe.setRange(LIS3DH_RANGE_2_G);
+	accelerometer_probe.setClick(1, 40);
+	HAL::delayMilliseconds(250);
+	accelerometer_probe.getClick();
+	//flag8_t src = accel.getInt1Src();
+	//Com::printF(PSTR("Int1Src: "), (int)src);
+	//Com::printF(PSTR("Click: "), (int)click);
+	HAL::i2cInit(TWI_CLOCK_FREQ);	// Re-enable the normal I2C
+#endif
+
+	
 
 #if FEATURE_SERVO                   // set servos to neutral positions at power_up
   #if defined(SERVO0_NEUTRAL_POS) && SERVO0_NEUTRAL_POS >= 500

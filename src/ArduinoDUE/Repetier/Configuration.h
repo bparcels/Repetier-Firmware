@@ -1316,8 +1316,8 @@ to recalibrate z.
 // Especially if you have more then 1 extruder acting as z probe this is important!
 #define EXTRUDER_IS_Z_PROBE 1
 #define Z_PROBE_PIN ORIG_Z_PROBE_PIN
-#define Z_PROBE_PULLUP 1
-#define Z_PROBE_ON_HIGH 0
+#define Z_PROBE_PULLUP 0
+#define Z_PROBE_ON_HIGH 1
 #define Z_PROBE_X_OFFSET 0
 #define Z_PROBE_Y_OFFSET 0
 #define Z_PROBE_BED_DISTANCE 20 // Higher than max bed level distance error in mm
@@ -1698,10 +1698,13 @@ Values must be in range 1..255
 // #define MOTOR_DRIVER_x StepperDriverWithEndstop<int stepPin, int dirPin, int enablePin,bool invertDir, bool invertEnable,int endstop_pin,bool minEndstop,minEndstop, bool endstopPullup> var(300,10,50)
 #define MOTOR_DRIVER_1(var) StepperDriver<E1_STEP_PIN, E1_DIR_PIN, E1_ENABLE_PIN, false, false> var(100.0f,5.0f)
 
-
+//////////////////////////////////////////////////////////////////////////////////
+//                I2C Accelerometer (LIS3DH) Z-Probe Support                    //
+//////////////////////////////////////////////////////////////////////////////////
+#define USES_LIS3DH_ZPROBE true
 
 //////////////////////////////////////////////////////////////////////////////////
-//                         TMC2130 Driver Support								//
+//                         TMC2130 Driver Support                               //
 //////////////////////////////////////////////////////////////////////////////////
 #define USES_TMC2130_DRIVERS true	
 /////// Trinamic Axis Settings ///////

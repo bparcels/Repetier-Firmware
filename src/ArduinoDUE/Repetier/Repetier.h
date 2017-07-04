@@ -927,6 +927,11 @@ extern void setupTimerInterrupt();
 extern void motorCurrentControlInit();
 extern void microstepInit();
 
+
+#if USES_LIS3DH_ZPROBE
+#include "Adafruit_LIS3DH.h"
+#endif
+
 #include "Printer.h"
 #include "motion.h"
 extern long baudrate;
@@ -1055,5 +1060,6 @@ extern int debugWaitLoop;
 
 // must be after CustomEvents as it might include definitions from there
 #include "DisplayList.h"
+
 
 #endif
