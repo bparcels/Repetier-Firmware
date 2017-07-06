@@ -102,9 +102,6 @@
     <ClInclude Include="Adafruit_LIS3DH.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Adafruit_Sensor.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="BedLeveling.cpp">

@@ -478,6 +478,12 @@ float Printer::runZMaxProbe() {
 bool Printer::startProbing(bool runScript) {
     float cx,cy,cz;
     realPosition(cx, cy, cz);
+	
+#if Z_IS_TMC2130
+	// Disable Stallguard endstop while probing... and reset when done
+	Printer::WriteTMC_Z(18, 0);
+#endif
+
     if(runScript)
         GCode::executeFString(Com::tZProbeStartScript);
     float maxStartHeight = EEPROM::zProbeBedDistance() + (EEPROM::zProbeHeight() > 0 ? EEPROM::zProbeHeight() : 0) + 0.1;
@@ -527,6 +533,12 @@ bool Printer::startProbing(bool runScript) {
 void Printer::finishProbing() {
     float cx,cy,cz;
     realPosition(cx, cy, cz);
+
+#if Z_IS_TMC2130
+	// Disable Stallguard endstop while probing... and reset when done
+	Printer::WriteTMC_Z(18, 1);
+#endif
+
     GCode::executeFString(Com::tZProbeEndScript);
     if(Extruder::current) {
 #if DUAL_X_AXIS
@@ -576,8 +588,24 @@ float Printer::runZProbe(bool first,bool last,uint8_t repeat,bool runStartScript
 #endif
     //int32_t updateZ = 0;
     waitForZProbeStart();
+
+#if USES_LIS3DH_ZPROBE
+	// the accelerometer needs to be reset before/after each probe
+	if (!Printer::accelerometer_probe.IsConnected()) {
+		Com::printErrorFLN(PSTR("Couldn't connect to LIS3DH for Z-Probing."));
+		return ILLEGAL_Z_PROBE;
+	}
+	Printer::accelerometer_probe.setClick(1, LIS3DH_CLICK_THRESHOLD);
+	HAL::delayMilliseconds(100);
+	Printer::accelerometer_probe.getClick();	// Just do a read to reset probe output
+	HAL::delayMilliseconds(100);
+	Printer::accelerometer_probe.getClick();	// Just do a read to reset probe output
+	HAL::delayMilliseconds(100);
+#endif
+
     Endstops::update();
     Endstops::update(); // need to call twice for full update!
+
     if(Endstops::zProbe()) {
         Com::printErrorFLN(PSTR("z-probe triggered before starting probing."));
         return ILLEGAL_Z_PROBE;
@@ -608,6 +636,21 @@ float Printer::runZProbe(bool first,bool last,uint8_t repeat,bool runStartScript
         if(r + 1 < repeat) {
             // go only shortest possible move up for repetitions
             PrintLine::moveRelativeDistanceInSteps(0, 0, shortMove, 0, HOMING_FEEDRATE_Z, true, false);
+
+#if USES_LIS3DH_ZPROBE
+			// the accelerometer needs to be reset before/after each probe
+			if (!Printer::accelerometer_probe.IsConnected()) {
+				Com::printErrorFLN(PSTR("Couldn't connect to LIS3DH for Z-Probing 2."));
+				return ILLEGAL_Z_PROBE;
+			}
+			Printer::accelerometer_probe.setClick(1, LIS3DH_CLICK_THRESHOLD);
+			HAL::delayMilliseconds(100);
+			Printer::accelerometer_probe.getClick();	// Just do a read to reset probe output
+			HAL::delayMilliseconds(100);
+			Printer::accelerometer_probe.getClick();	// Just do a read to reset probe output
+			HAL::delayMilliseconds(100);
+#endif
+
 			Endstops::update();
 			Endstops::update(); // need to call twice for full update!
             if(Endstops::zProbe()) {
@@ -622,6 +665,21 @@ float Printer::runZProbe(bool first,bool last,uint8_t repeat,bool runStartScript
     }
     // Go back to start position
     PrintLine::moveRelativeDistanceInSteps(0, 0, lastCorrection - currentPositionSteps[Z_AXIS], 0, HOMING_FEEDRATE_Z, true, false);
+
+#if USES_LIS3DH_ZPROBE
+	// the accelerometer needs to be reset before/after each probe
+	if (!Printer::accelerometer_probe.IsConnected()) {
+		Com::printErrorFLN(PSTR("Couldn't connect to LIS3DH for Z-Probing."));
+		return ILLEGAL_Z_PROBE;
+	}
+	Printer::accelerometer_probe.setClick(0, 100);		// Disable interrupt since we are done
+	HAL::delayMilliseconds(100);
+	Printer::accelerometer_probe.getClick();	// Just do a read to reset probe output
+	HAL::delayMilliseconds(100);
+	Printer::accelerometer_probe.getClick();	// Just do a read to reset probe output
+	HAL::delayMilliseconds(100);
+#endif
+
 	Endstops::update();
 	Endstops::update(); // need to call twice for full update!
     if(Endstops::zProbe()) { // did we untrigger? If not don't trust result!

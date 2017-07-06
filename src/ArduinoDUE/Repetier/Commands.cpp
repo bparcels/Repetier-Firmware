@@ -1517,6 +1517,7 @@ void Commands::processGCode(GCode *com) {
 \brief Execute the G command stored in com.
 */
 void Commands::processMCode(GCode *com) {
+	uint8_t tempvar; // temp variable for use in case statements
     if(EVENT_UNHANDLED_M_CODE(com))
         return;
     switch( com->M ) {
@@ -2635,52 +2636,70 @@ void Commands::processMCode(GCode *com) {
 				Com::printFLN("15 = SEMAX");
 				Com::printFLN("16 = SEDN");
 				Com::printFLN("17 = SEUP");
+				Com::printFLN("18 = diag1_stall");
 			#endif			
 			break;			
 			////////////////////////////// End of custom M-Code //////////////////////////////
 
 
 			////////////////////////////////////////////////
-			// M930: Clear Accelerometer Interrupt
+			// M930: Set Accelerometer Click Threshold
 			////////////////////////////////////////////////
 		case 930:
-#if USES_LIS3DH_ZPROBE			
-			if (!Printer::accelerometer_probe.begin()) {
-				Com::printF(PSTR("Failed to connect to accelerometer (LIS3DH)..."));
-			}
-			else
-			{
-				Com::printF(PSTR("Connected to accelerometer successfully (LIS3DH)..."));
-			}			
-			Printer::accelerometer_probe.getClick();
-			HAL::i2cInit(TWI_CLOCK_FREQ);	// Re-enable the normal I2C
-			Com::printFLN("Interrupt cleared (LIS3DH)");
-#endif			
-			break;
-			////////////////////////////// End of custom M-Code //////////////////////////////
-
-			////////////////////////////////////////////////
-			// M931: Set Accelerometer Click Threshold
-			////////////////////////////////////////////////
-		case 931:
 #if USES_LIS3DH_ZPROBE
 			if (com->hasS()) {
-				if (!Printer::accelerometer_probe.begin()) {
-					Com::printF(PSTR("Failed to connect to accelerometer (LIS3DH)..."));
+				if (!Printer::accelerometer_probe.IsConnected()) {
+					Com::printFLN(PSTR("Failed to connect to accelerometer (LIS3DH)..."));
+					break;
 				}
 				else
 				{
-					Com::printF(PSTR("Connected to accelerometer successfully (LIS3DH)..."));
+					Com::printFLN(PSTR("Connected to accelerometer successfully (LIS3DH)..."));
 				}
-				Printer::accelerometer_probe.setClick(1, com->S);
-				HAL::delayMilliseconds(250);
-				Printer::accelerometer_probe.getClick();
-				HAL::i2cInit(TWI_CLOCK_FREQ);	// Re-enable the normal I2C
+				Printer::accelerometer_probe.setRange(LIS3DH_RANGE_2_G);
+				Printer::accelerometer_probe.setClick(1, com->S);				
+				Printer::accelerometer_probe.getClick();				
+
+				//HAL::i2cInit(TWI_CLOCK_FREQ);	// Re-enable the normal I2C
+
 				Com::printFLN("Threshold changed (LIS3DH)");
 			}
 			else {
 				Com::printFLN("M391 Syntax:   M391 Sxxx where xxx is the desired threshold");
 			}
+#endif			
+			break;
+			////////////////////////////// End of custom M-Code //////////////////////////////
+
+
+			////////////////////////////////////////////////////////////////////////////////////
+			// M931: Test if can access withhout calling begin again... will reset click if so.
+			////////////////////////////////////////////////////////////////////////////////////
+		case 931:
+#if USES_LIS3DH_ZPROBE						
+			if (!Printer::accelerometer_probe.IsConnected()) {
+				Com::printFLN(PSTR("Failed to connect to accelerometer (LIS3DH)..."));
+				break;
+			}
+			else
+			{
+				Com::printFLN(PSTR("Connected to accelerometer successfully (LIS3DH)..."));
+			}
+			
+			tempvar = Printer::accelerometer_probe.getClick();
+			//HAL::i2cInit(TWI_CLOCK_FREQ);	// Re-enable the normal I2C
+
+			if (tempvar == 0) {
+				Com::printFLN(PSTR("No click..."));
+			}
+			if (!(tempvar & 0x30)) {
+				Com::printFLN(PSTR("No click..."));
+			}
+			Com::printF(PSTR("Click detected: "), tempvar);
+			if (tempvar & 0x10) Com::printFLN(" single click");
+			if (tempvar & 0x20) Com::printFLN(" double click");
+
+			
 #endif			
 			break;
 			////////////////////////////// End of custom M-Code //////////////////////////////

@@ -695,24 +695,24 @@ on this endstop.
 */
 #define ENDSTOP_PULLUP_X_MIN true
 #define ENDSTOP_PULLUP_Y_MIN true
-#define ENDSTOP_PULLUP_Z_MIN true
+#define ENDSTOP_PULLUP_Z_MIN false
 #define ENDSTOP_PULLUP_X_MAX true
 #define ENDSTOP_PULLUP_Y_MAX true
-#define ENDSTOP_PULLUP_Z_MAX true
+#define ENDSTOP_PULLUP_Z_MAX false
 
 // Set to true to invert the logic of the endstops
 #define ENDSTOP_X_MIN_INVERTING true
 #define ENDSTOP_Y_MIN_INVERTING true
-#define ENDSTOP_Z_MIN_INVERTING true 
+#define ENDSTOP_Z_MIN_INVERTING false 
 #define ENDSTOP_X_MAX_INVERTING true
 #define ENDSTOP_Y_MAX_INVERTING true
-#define ENDSTOP_Z_MAX_INVERTING true
+#define ENDSTOP_Z_MAX_INVERTING false
 
 // Set the values true where you have a hardware endstop. The Pin number is taken from pins.h.
 
 #define MIN_HARDWARE_ENDSTOP_X true
 #define MIN_HARDWARE_ENDSTOP_Y true
-#define MIN_HARDWARE_ENDSTOP_Z true
+#define MIN_HARDWARE_ENDSTOP_Z false
 #define MAX_HARDWARE_ENDSTOP_X true
 #define MAX_HARDWARE_ENDSTOP_Y true
 #define MAX_HARDWARE_ENDSTOP_Z true
@@ -1210,7 +1210,7 @@ matches, the stored values are used to overwrite the settings.
 IMPORTANT: With mode <>0 some changes in Configuration.h are not set any more, as they are
            taken from the EEPROM.
 */
-#define EEPROM_MODE 7
+#define EEPROM_MODE 2
 
 
 /**************** duplicate motor driver ***************
@@ -1320,7 +1320,7 @@ to recalibrate z.
 #define Z_PROBE_ON_HIGH 1
 #define Z_PROBE_X_OFFSET 0
 #define Z_PROBE_Y_OFFSET 0
-#define Z_PROBE_BED_DISTANCE 20 // Higher than max bed level distance error in mm
+#define Z_PROBE_BED_DISTANCE 10 // Higher than max bed level distance error in mm
 
 // Waits for a signal to start. Valid signals are probe hit and ok button.
 // This is needful if you have the probe trigger by hand.
@@ -1328,10 +1328,10 @@ to recalibrate z.
 /** Speed of z-axis in mm/s when probing */
 #define Z_PROBE_SPEED 20
 #define Z_PROBE_XY_SPEED 50
-#define Z_PROBE_SWITCHING_DISTANCE 10 // Distance to safely switch off probe after it was activated
+#define Z_PROBE_SWITCHING_DISTANCE 5 // Distance to safely switch off probe after it was activated
 #define Z_PROBE_REPETITIONS 3 // Repetitions for probing at one point. 
 /** The height is the difference between activated probe position and nozzle height. */
-#define Z_PROBE_HEIGHT 0
+#define Z_PROBE_HEIGHT -0.1
 /** These scripts are run before resp. after the z-probe is done. Add here code to activate/deactivate probe if needed. */
 #define Z_PROBE_START_SCRIPT ""
 #define Z_PROBE_FINISHED_SCRIPT ""
@@ -1385,12 +1385,12 @@ motorized bed leveling */
    The same 3 points are used for the G29 command.
 */
 #define FEATURE_AUTOLEVEL true
-#define Z_PROBE_X1 -105
-#define Z_PROBE_Y1 145
-#define Z_PROBE_X2 105
-#define Z_PROBE_Y2 145
+#define Z_PROBE_X1 -80
+#define Z_PROBE_Y1 80
+#define Z_PROBE_X2 80
+#define Z_PROBE_Y2 80
 #define Z_PROBE_X3 0
-#define Z_PROBE_Y3 -150
+#define Z_PROBE_Y3 -75
 /* Bending correction adds a value to a measured z-probe value. This may be
   required when the z probe needs some force to trigger and this bends the
   bed down. Currently the correction values A/B/C correspond to z probe
@@ -1702,6 +1702,7 @@ Values must be in range 1..255
 //                I2C Accelerometer (LIS3DH) Z-Probe Support                    //
 //////////////////////////////////////////////////////////////////////////////////
 #define USES_LIS3DH_ZPROBE true
+#define LIS3DH_CLICK_THRESHOLD 80
 
 //////////////////////////////////////////////////////////////////////////////////
 //                         TMC2130 Driver Support                               //

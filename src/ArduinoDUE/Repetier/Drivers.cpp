@@ -510,6 +510,10 @@ void Printer::WriteTMC_Z(int reg_index, int32_t value) {
 		stepperZ.set_seup(value);
 		Com::printFLN("M920: Z SEUP set to ", value);
 		break;
+	case 18:
+		stepperZ.set_diag1_stall(value);
+		Com::printFLN("M920: Z diag1_stall set to ", value);
+		break;
 	default:
 		Com::printFLN("M920 error - unknown register index - Try M922 to list available register indicies.");
 		break;
@@ -629,17 +633,17 @@ void Printer::tmc2130_init() {
 	stepperZ.set_chm(0);
 	stepperZ.set_TPOWERDOWN(10);
 	stepperZ.set_en_pwm_mode(0);
-	stepperZ.set_TCOOLTHRS(500);
-	stepperZ.set_sfilt(0);
+	stepperZ.set_TCOOLTHRS(250);
+	stepperZ.set_sfilt(1);
 	stepperZ.set_sgt(0);
 	// Coolstep
-	stepperZ.set_seimin(0);
+	stepperZ.set_seimin(1);
 	stepperZ.set_semin(2);
 	stepperZ.set_semax(1);
 	stepperZ.set_sedn(1);
 	stepperZ.set_seup(9);
 	//
-	stepperZ.set_diag1_int_pushpull(0);
+	stepperZ.set_diag1_int_pushpull(1);
 	stepperZ.set_diag1_index(0);
 	stepperZ.set_diag1_onstate(0);
 	stepperZ.set_diag1_steps_skipped(0);

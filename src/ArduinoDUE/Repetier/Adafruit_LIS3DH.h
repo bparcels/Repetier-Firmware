@@ -14,6 +14,11 @@
     @section  HISTORY
 
     v1.0  - First release
+	v7 - Adapted for repetier
+	
+	************** NOTE **************
+	This library has been severely cut down and adapted for use in Repetier
+	-B Parcels
 */
 /**************************************************************************/
 
@@ -21,17 +26,6 @@
 #ifndef ADAFRUIT_LIS3DH_H
 #define ADAFRUIT_LIS3DH_H
 
-#if ARDUINO >= 100
- #include "Arduino.h"
-#else
- #include "WProgram.h"
-#endif
-
-#include <Wire.h>
-#ifndef __AVR_ATtiny85__
-  #include <SPI.h>
-#endif
-#include "Adafruit_Sensor.h"
 
 /*=========================================================================
     I2C ADDRESS/BITS
@@ -110,48 +104,24 @@ typedef enum
 
 } lis3dh_dataRate_t;
 
-class Adafruit_LIS3DH : public Adafruit_Sensor {
+class Adafruit_LIS3DH {
  public:
   Adafruit_LIS3DH(void);
-  Adafruit_LIS3DH(TwoWire *Wi);
-  Adafruit_LIS3DH(int8_t cspin);
-  Adafruit_LIS3DH(int8_t cspin, int8_t mosipin, int8_t misopin, int8_t sckpin);
   
-  bool       begin(uint8_t addr = LIS3DH_DEFAULT_ADDRESS);
- 
-  void read();
-  int16_t readADC(uint8_t a);
+  bool  begin(uint8_t addr = LIS3DH_DEFAULT_ADDRESS);
+  bool IsConnected();
 
   void setRange(lis3dh_range_t range);
-  lis3dh_range_t getRange(void);
-
   void setDataRate(lis3dh_dataRate_t dataRate);
-  lis3dh_dataRate_t getDataRate(void);
-
-  bool getEvent(sensors_event_t *event);
-  void getSensor(sensor_t *sensor);
-
-  uint8_t getOrientation(void);
-
+  
   void setClick(uint8_t c, uint8_t clickthresh, uint8_t timelimit = 10, uint8_t timelatency = 20, uint8_t timewindow = 255);
   uint8_t getClick(void);
-
-  int16_t x, y, z;
-  float x_g, y_g, z_g;
-
+  
  private:
-  TwoWire *I2Cinterface;
-
   uint8_t readRegister8(uint8_t reg);
   void writeRegister8(uint8_t reg, uint8_t value);
-  uint8_t spixfer(uint8_t x = 0xFF);
 
-
-  int32_t _sensorID;
   int8_t  _i2caddr;
-
-  // SPI
-  int8_t _cs, _mosi, _miso, _sck;
 };
 
 #endif

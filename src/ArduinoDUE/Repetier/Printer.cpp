@@ -69,7 +69,7 @@ uint8_t Printer::flag0 = 0;
 uint8_t Printer::flag1 = 0;
 uint8_t Printer::flag2 = 0;
 uint8_t Printer::flag3 = 0;
-uint8_t Printer::debugLevel = 6; ///< Bitfield defining debug output. 1 = echo, 2 = info, 4 = error, 8 = dry run., 16 = Only communication, 32 = No moves
+uint8_t Printer::debugLevel = 6+64; ///< Bitfield defining debug output. 1 = echo, 2 = info, 4 = error, 8 = dry run., 16 = Only communication, 32 = No moves
 fast8_t Printer::stepsPerTimerCall = 1;
 uint16_t Printer::menuMode = 0;
 uint8_t Printer::mode = DEFAULT_PRINTER_MODE;
@@ -1395,24 +1395,19 @@ extruder[5].jamLastSignal = READ(EXT5_JAM_PIN);
 
 
 #if USES_LIS3DH_ZPROBE		/////////// TMC2130 Driver init
-	
-	if (!accelerometer_probe.begin()) {
-		Com::printF(PSTR("Failed to connect to accelerometer (LIS3DH)..."));
+
+	HAL::i2cInit(400000); // Initialize the i2c bus.
+	if (!accelerometer_probe.begin(0x18)) {
+		Com::printFLN(PSTR("Failed to connect to accelerometer (LIS3DH)..."));
 	}
 	else
 	{
-		Com::printF(PSTR("Connected to accelerometer successfully (LIS3DH)..."));
+		Com::printFLN(PSTR("Connected to accelerometer successfully (LIS3DH)..."));
 	}
-	//flag8_t click = Printer::accelerometer.getClick();
-	//flag8_t src = Printer::accelerometer.getInt1Src();
 	accelerometer_probe.setRange(LIS3DH_RANGE_2_G);
-	accelerometer_probe.setClick(1, 40);
-	HAL::delayMilliseconds(250);
-	accelerometer_probe.getClick();
-	//flag8_t src = accel.getInt1Src();
-	//Com::printF(PSTR("Int1Src: "), (int)src);
-	//Com::printF(PSTR("Click: "), (int)click);
-	HAL::i2cInit(TWI_CLOCK_FREQ);	// Re-enable the normal I2C
+	accelerometer_probe.setClick(0, 100);
+	accelerometer_probe.getClick();	
+	//HAL::i2cInit(TWI_CLOCK_FREQ);	// Re-enable the normal I2C
 #endif
 
 	
