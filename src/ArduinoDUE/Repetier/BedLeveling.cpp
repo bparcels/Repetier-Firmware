@@ -581,6 +581,7 @@ float Printer::runZProbe(bool first,bool last,uint8_t repeat,bool runStartScript
     }        
     Commands::waitUntilEndOfAllMoves();
     int32_t sum = 0, probeDepth;
+	int32_t measurements_array[10];	// max of 10 repeated measurements
     int32_t shortMove = static_cast<int32_t>((float)Z_PROBE_SWITCHING_DISTANCE * axisStepsPerMM[Z_AXIS]); // distance to go up for repeated moves
     int32_t lastCorrection = currentPositionSteps[Z_AXIS]; // starting position
 #if NONLINEAR_SYSTEM
@@ -632,6 +633,7 @@ float Printer::runZProbe(bool first,bool last,uint8_t repeat,bool runStartScript
 #endif
         currentPositionSteps[Z_AXIS] += stepsRemainingAtZHit; // now current position is correct
         sum += lastCorrection - currentPositionSteps[Z_AXIS];
+		measurements_array[r] = lastCorrection - currentPositionSteps[Z_AXIS];
         //Com::printFLN(PSTR("ZHSteps:"),lastCorrection - currentPositionSteps[Z_AXIS]);
         if(r + 1 < repeat) {
             // go only shortest possible move up for repetitions
@@ -690,7 +692,40 @@ float Printer::runZProbe(bool first,bool last,uint8_t repeat,bool runStartScript
     updateCurrentPosition(false);
     //Com::printFLN(PSTR("after probe"));
     //Commands::printCurrentPosition();
-    float distance = static_cast<float>(sum) * invAxisStepsPerMM[Z_AXIS] / static_cast<float>(repeat) + EEPROM::zProbeHeight();
+	float distance = static_cast<float>(sum) * invAxisStepsPerMM[Z_AXIS] / static_cast<float>(repeat) + EEPROM::zProbeHeight();
+
+	/////// Removal of extraneous data ////////////////////
+	/////// ZOT - Not complete or tested... just starter code to get going on this feature!!
+	/////// This will throw out the measurement that is furthest from average, then re-average
+	if (repeat >= 5) {
+		// Calc the complete average (but doesn't include the steps to mm conversion or the zprobeheight)
+		float first_avg = static_cast<float>(sum) / static_cast<float>(repeat);
+
+		// Find the measurement furthest from the average
+		int8_t furthest_index = 0;
+		float furthest_dist = 0;
+		for (int8_t i = 0; i < repeat; i++)
+		{
+			if (abs(measurements_array[i] - first_avg) > furthest_dist)
+			{
+				furthest_dist = abs(measurements_array[i] - first_avg);
+				furthest_index = i;
+			}
+		}
+		
+		// Recalculate the sum
+		sum = 0;
+		for (int8_t i = 0; i < repeat; i++) {
+			if (i != furthest_index) {
+				sum += measurements_array[i];
+			}
+		}
+
+		// Reaverage
+		float distance = static_cast<float>(sum) * invAxisStepsPerMM[Z_AXIS] / static_cast<float>(repeat - 1) + EEPROM::zProbeHeight();
+	}
+
+
 #if FEATURE_AUTOLEVEL
     // we must change z for the z change from moving in rotated coords away from real position
     float dx,dy,dz;
